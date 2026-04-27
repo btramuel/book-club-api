@@ -17,7 +17,6 @@
 //    Import this and stick it in any route that needs auth:
 //    router.get("/profile", authenticate, controller.getProfile)
 //
-// ==
 
 import jwt from "jsonwebtoken";
 
