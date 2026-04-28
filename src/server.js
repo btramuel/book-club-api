@@ -57,12 +57,7 @@ const allowedOrigins = process.env.ALLOWED_ORIGINS
   : defaultDevOrigins;
 
 const corsOptions = {
-  origin(origin, callback) {
-    // No Origin header means same-origin or a tool like curl/Swagger UI
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`Origin ${origin} not allowed by CORS`));
-  },
+  origin: true,
 };
 
 // --- Middleware ---
