@@ -29,6 +29,7 @@ import {
   ValidationError,
   ForbiddenError,
   NotFoundError,
+  ConflictError,
 } from "../errors/index.js";
 
 // Only these three values are allowed for status
@@ -67,6 +68,9 @@ async function addEntry(clubId, data, userId) {
     );
   }
 
+  //prismas throws a error if you try to add the same book twice 
+  // to the same club's reading list, so we don't need to check for that here
+  try {
   const entry = await readingListRepository.createEntry({
     clubId,
     bookId: data.bookId,
@@ -74,9 +78,17 @@ async function addEntry(clubId, data, userId) {
     startedAt: data.startedAt || null,
     finishedAt: data.finishedAt || null,
   });
-
   return entry;
-}
+} catch (err) {
+  if (err.code === "P2002") {
+    throw new ConflictError (
+      "This book is already on the club's reading list.",
+    );
+  }
+  throw err;
+ }
+} 
+
 
 async function getEntriesByClub(clubId) {
   // Verify the club exists before querying its reading list

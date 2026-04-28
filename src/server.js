@@ -92,6 +92,18 @@ app.use("/api/clubs", clubRoutes);
 // file already includes /clubs/:clubId/reading-list in the paths
 app.use("/api", readingListRoutes);
 
+// error handler middleware
+// catches errors from the controllers so I don't have to
+// write try/catch everywhere
+app.use((err, req, res, next) => {
+  if (err.status) {
+    return res.status(err.status).json({ error: err.message });
+  }
+  // unknown error, log it and send a generic 500
+  console.log("Unexpected error:", err);
+  res.status(500).json({ error: "Something went wrong" });
+});
+
 // Swagger documentation page
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

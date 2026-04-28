@@ -17,62 +17,38 @@
 //
 
 import bookService from "../services/bookService.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 
 async function create(req, res) {
-  try {
-    const book = await bookService.createBook(req.body);
-    res.status(201).json(book);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to create book." });
-  }
+  const book = await bookService.createBook(req.body);
+  res.status(201).json(book);
 }
 
 async function getAll(req, res) {
-  try {
-    const books = await bookService.getAllBooks();
-    res.json(books);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch books." });
-  }
+  const books = await bookService.getAllBooks();
+  res.json(books);
 }
 
 async function getById(req, res) {
-  try {
-    const book = await bookService.getBookById(req.params.id);
-    res.json(book);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to fetch book." });
-  }
+  const book = await bookService.getBookById(req.params.id);
+  res.json(book);
 }
 
 async function update(req, res) {
-  try {
-    const book = await bookService.updateBook(req.params.id, req.body);
-    res.json(book);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to update book." });
-  }
+  const book = await bookService.updateBook(req.params.id, req.body);
+  res.json(book);
 }
 
 async function remove(req, res) {
-  try {
-    await bookService.deleteBook(req.params.id);
-    res.status(204).send();
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to delete book." });
-  }
+  await bookService.deleteBook(req.params.id);
+  res.status(204).send();
 }
 
-export default { create, getAll, getById, update, remove };
+// wrap them all so errors go to the error handler
+export default {
+  create: asyncHandler(create),
+  getAll: asyncHandler(getAll),
+  getById: asyncHandler(getById),
+  update: asyncHandler(update),
+  remove: asyncHandler(remove),
+};

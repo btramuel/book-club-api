@@ -55,14 +55,15 @@ async function register(data) {
 }
 
 async function login(data) {
-  // Look up the user by email
+  console.log("Login attempt for:", data.email);
   const user = await userRepository.findByEmail(data.email);
+  console.log("User found:", user ? user.username : "NONE");
   if (!user) {
     throw new AuthError("Invalid email or password.");
   }
 
-  // Compare the plain text password against the stored hash
   const passwordMatch = await bcrypt.compare(data.password, user.passwordHash);
+  console.log("Password match:", passwordMatch);
   if (!passwordMatch) {
     throw new AuthError("Invalid email or password.");
   }
@@ -74,5 +75,4 @@ async function login(data) {
     token,
   };
 }
-
 export default { register, login };

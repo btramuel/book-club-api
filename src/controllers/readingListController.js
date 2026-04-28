@@ -19,82 +19,45 @@
 //
 
 import readingListService from "../services/readingListService.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 
 async function create(req, res) {
-  try {
-    const entry = await readingListService.addEntry(
-      req.params.clubId,
-      req.body,
-      req.user.id,
-    );
-    res.status(201).json(entry);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    // Prisma throws this when the unique constraint is violated
-    // (same book added to the same club twice)
-    if (err.code === "P2002") {
-      return res
-        .status(409)
-        .json({ error: "This book is already on the club's reading list." });
-    }
-    res.status(500).json({ error: "Failed to add reading list entry." });
-  }
+  const entry = await readingListService.addEntry(
+    req.params.clubId,
+    req.body,
+    req.user.id,
+  );
+  res.status(201).json(entry);
 }
 
 async function getByClub(req, res) {
-  try {
-    const entries = await readingListService.getEntriesByClub(
-      req.params.clubId,
-    );
-    res.json(entries);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to fetch reading list." });
-  }
+  const entries = await readingListService.getEntriesByClub(req.params.clubId);
+  res.json(entries);
 }
 
 async function getById(req, res) {
-  try {
-    const entry = await readingListService.getEntryById(req.params.id);
-    res.json(entry);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to fetch reading list entry." });
-  }
+  const entry = await readingListService.getEntryById(req.params.id);
+  res.json(entry);
 }
 
 async function update(req, res) {
-  try {
-    const entry = await readingListService.updateEntry(
-      req.params.id,
-      req.body,
-      req.user.id,
-    );
-    res.json(entry);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to update reading list entry." });
-  }
+  const entry = await readingListService.updateEntry(
+    req.params.id,
+    req.body,
+    req.user.id,
+  );
+  res.json(entry);
 }
 
 async function remove(req, res) {
-  try {
-    await readingListService.deleteEntry(req.params.id, req.user.id);
-    res.status(204).send();
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to delete reading list entry." });
-  }
+  await readingListService.deleteEntry(req.params.id, req.user.id);
+  res.status(204).send();
 }
 
-export default { create, getByClub, getById, update, remove };
+export default {
+  create: asyncHandler(create),
+  getByClub: asyncHandler(getByClub),
+  getById: asyncHandler(getById),
+  update: asyncHandler(update),
+  remove: asyncHandler(remove),
+};

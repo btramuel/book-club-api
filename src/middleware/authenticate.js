@@ -20,7 +20,10 @@
 
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET) {
+  throw new Error("JWT_SECRET is not set in env.add to your .env file");
+}
 
 function authenticate(req, res, next) {
   const header = req.headers.authorization;

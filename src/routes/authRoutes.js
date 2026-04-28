@@ -11,9 +11,20 @@
 //
 
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import userController from "../controllers/userController.js";
 
 const router = Router();
+// stop people from spamming login attempts
+// 10 tries per 15 minutes per IP, that should be enough for normal use
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: "Too many login attempts. Try again in a bit." },
+});
+
+router.use(authLimiter);
+
 
 /**
  * @swagger

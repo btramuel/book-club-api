@@ -16,47 +16,35 @@
 //    `status` property, so we just forward it instead of
 //    matching on error message strings.
 //
+
 import userService from "../services/userService.js";
+import asyncHandler from "../middleware/asyncHandler.js";
+import { ValidationError } from "../errors/index.js";
 
 async function register(req, res) {
-  try {
-    const { username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
-    // Quick sanity check before calling the service
-    if (!username || !email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Username, email, and password are required." });
-    }
-
-    const result = await userService.register({ username, email, password });
-    res.status(201).json(result);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Something went wrong during registration." });
+  // Quick sanity check before calling the service
+  if (!username || !email || !password) {
+    throw new ValidationError("Username, email, and password are required.");
   }
+
+  const result = await userService.register({ username, email, password });
+  res.status(201).json(result);
 }
 
 async function login(req, res) {
-  try {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ error: "Email and password are required." });
-    }
-
-    const result = await userService.login({ email, password });
-    res.json(result);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Something went wrong during login." });
+  if (!email || !password) {
+    throw new ValidationError("Email and password are required.");
   }
+
+  const result = await userService.login({ email, password });
+  res.json(result);
 }
 
-export default { register, login };
+export default {
+  register: asyncHandler(register),
+  login: asyncHandler(login),
+};

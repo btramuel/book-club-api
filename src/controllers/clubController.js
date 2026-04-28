@@ -19,90 +19,54 @@
 //
 
 import clubService from "../services/clubService.js";
+import asyncHandler from "../middleware/asyncHandler.js";
 
 async function create(req, res) {
-  try {
-    const club = await clubService.createClub(req.body, req.user.id);
-    res.status(201).json(club);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to create club." });
-  }
+  const club = await clubService.createClub(req.body, req.user.id);
+  res.status(201).json(club);
 }
 
 async function getAll(req, res) {
-  try {
-    const clubs = await clubService.getAllClubs();
-    res.json(clubs);
-  } catch (err) {
-    res.status(500).json({ error: "Failed to fetch clubs." });
-  }
+  const clubs = await clubService.getAllClubs();
+  res.json(clubs);
 }
 
 async function getById(req, res) {
-  try {
-    const club = await clubService.getClubById(req.params.id);
-    res.json(club);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to fetch club." });
-  }
+  const club = await clubService.getClubById(req.params.id);
+  res.json(club);
 }
 
 async function update(req, res) {
-  try {
-    const club = await clubService.updateClub(
-      req.params.id,
-      req.body,
-      req.user.id,
-    );
-    res.json(club);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to update club." });
-  }
+  const club = await clubService.updateClub(
+    req.params.id,
+    req.body,
+    req.user.id,
+  );
+  res.json(club);
 }
 
 async function remove(req, res) {
-  try {
-    await clubService.deleteClub(req.params.id, req.user.id);
-    res.status(204).send();
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to delete club." });
-  }
+  await clubService.deleteClub(req.params.id, req.user.id);
+  res.status(204).send();
 }
 
 async function join(req, res) {
-  try {
-    const member = await clubService.joinClub(req.params.id, req.user.id);
-    res.status(201).json(member);
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to join club." });
-  }
+  const member = await clubService.joinClub(req.params.id, req.user.id);
+  res.status(201).json(member);
 }
 
 async function leave(req, res) {
-  try {
-    await clubService.leaveClub(req.params.id, req.user.id);
-    res.status(204).send();
-  } catch (err) {
-    if (err.status) {
-      return res.status(err.status).json({ error: err.message });
-    }
-    res.status(500).json({ error: "Failed to leave club." });
-  }
+  await clubService.leaveClub(req.params.id, req.user.id);
+  res.status(204).send();
 }
 
-export default { create, getAll, getById, update, remove, join, leave };
+// wrap them all so errors go to the error handler
+export default {
+  create: asyncHandler(create),
+  getAll: asyncHandler(getAll),
+  getById: asyncHandler(getById),
+  update: asyncHandler(update),
+  remove: asyncHandler(remove),
+  join: asyncHandler(join),
+  leave: asyncHandler(leave),
+};
