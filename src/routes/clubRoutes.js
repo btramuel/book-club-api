@@ -316,7 +316,7 @@ router.put("/:id", clubController.update);
  *         schema:
  *           type: string
  * 
- *      responses:
+ *     responses:
  *       204:
  *         description: Club deleted
  *       403:
@@ -351,7 +351,6 @@ router.put("/:id", clubController.update);
  *                   example: "No token provided. Please log in."
  */
 router.delete("/:id", clubController.remove);
-
 
 /**
  * @swagger
