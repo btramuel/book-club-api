@@ -60,19 +60,91 @@ router.use(authenticate);
  *               finishedAt:
  *                 type: string
  *                 format: date-time
+ * 
  *     responses:
  *       201:
  *         description: Book added to reading list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "880e8400-e29b-41d4-a716-446655440000"
+ *                 clubId:
+ *                   type: string
+ *                   example: "660e8400-e29b-41d4-a716-446655440000"
+ *                 bookId:
+ *                   type: string
+ *                   example: "550e8400-e29b-41d4-a716-446655440000"
+ *                 status:
+ *                   type: string
+ *                   example: "planned"
+ *                 startedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                   example: null
+ *                 finishedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                   example: null
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-04-28T10:30:00.000Z"
  *       400:
  *         description: Invalid status value
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Status must be planned, reading, or finished."
  *       403:
  *         description: Not a member of this club
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "You must be a member of this club to do that."
  *       404:
  *         description: Club or book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Club not found."
  *       409:
  *         description: Book already on this club's list
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "This book is already on the club's reading list."
  *       401:
  *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No token provided. Please log in."
  */
 router.post("/clubs/:clubId/reading-list", readingListController.create);
 
@@ -90,13 +162,63 @@ router.post("/clubs/:clubId/reading-list", readingListController.create);
  *         required: true
  *         schema:
  *           type: string
+ * 
  *     responses:
  *       200:
  *         description: List of reading list entries with book details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: string
+ *                     example: "880e8400-e29b-41d4-a716-446655440000"
+ *                   clubId:
+ *                     type: string
+ *                     example: "660e8400-e29b-41d4-a716-446655440000"
+ *                   bookId:
+ *                     type: string
+ *                     example: "550e8400-e29b-41d4-a716-446655440000"
+ *                   status:
+ *                     type: string
+ *                     example: "reading"
+ *                   startedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     nullable: true
+ *                     example: "2026-03-01T00:00:00.000Z"
+ *                   finishedAt:
+ *                     type: string
+ *                     format: date-time
+ *                     nullable: true
+ *                     example: null
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
+ *                     example: "2026-04-28T10:30:00.000Z"
  *       404:
  *         description: Club not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Club not found."
  *       401:
  *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No token provided. Please log in."
  */
 router.get("/clubs/:clubId/reading-list", readingListController.getByClub);
 
@@ -120,13 +242,61 @@ router.get("/clubs/:clubId/reading-list", readingListController.getByClub);
  *         schema:
  *           type: string
  *         description: The reading list entry's UUID
+ * 
  *     responses:
  *       200:
  *         description: The reading list entry
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "880e8400-e29b-41d4-a716-446655440000"
+ *                 clubId:
+ *                   type: string
+ *                   example: "660e8400-e29b-41d4-a716-446655440000"
+ *                 bookId:
+ *                   type: string
+ *                   example: "550e8400-e29b-41d4-a716-446655440000"
+ *                 status:
+ *                   type: string
+ *                   example: "finished"
+ *                 startedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                   example: "2026-01-15T00:00:00.000Z"
+ *                 finishedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                   example: "2026-02-28T00:00:00.000Z"
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-04-28T10:30:00.000Z"
  *       404:
  *         description: Entry not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Reading list entry not found."
  *       401:
  *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No token provided. Please log in."
  */
 router.get("/clubs/:clubId/reading-list/:id", readingListController.getById);
 
@@ -165,17 +335,81 @@ router.get("/clubs/:clubId/reading-list/:id", readingListController.getById);
  *               finishedAt:
  *                 type: string
  *                 format: date-time
+ * 
  *     responses:
  *       200:
  *         description: Entry updated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                   example: "880e8400-e29b-41d4-a716-446655440000"
+ *                 clubId:
+ *                   type: string
+ *                   example: "660e8400-e29b-41d4-a716-446655440000"
+ *                 bookId:
+ *                   type: string
+ *                   example: "550e8400-e29b-41d4-a716-446655440000"
+ *                 status:
+ *                   type: string
+ *                   example: "reading"
+ *                 startedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                   example: "2026-04-28T00:00:00.000Z"
+ *                 finishedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   nullable: true
+ *                   example: null
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-04-28T10:30:00.000Z"
  *       400:
  *         description: Invalid status value
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Status must be planned, reading, or finished."
  *       403:
  *         description: Not a member of this club
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "You must be a member of this club to do that."
  *       404:
  *         description: Entry not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Reading list entry not found."
  *       401:
  *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No token provided. Please log in."
  */
 router.put("/clubs/:clubId/reading-list/:id", readingListController.update);
 
@@ -198,15 +432,40 @@ router.put("/clubs/:clubId/reading-list/:id", readingListController.update);
  *         required: true
  *         schema:
  *           type: string
+ * 
  *     responses:
  *       204:
  *         description: Entry removed
  *       403:
  *         description: Not a member of this club
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "You must be a member of this club to do that."
  *       404:
  *         description: Entry not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Reading list entry not found."
  *       401:
  *         description: Not authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "No token provided. Please log in."
  */
 router.delete("/clubs/:clubId/reading-list/:id", readingListController.remove);
 

@@ -28,7 +28,7 @@ router.use(authLimiter);
 
 /**
  * @swagger
- * /auth/register:
+ * /auth/signup:
  *   post:
  *     summary: Create a new user account
  *     tags: [Auth]
@@ -52,15 +52,51 @@ router.use(authLimiter);
  *               password:
  *                 type: string
  *                 example: mypassword123
- *     responses:
+*     responses:
  *       201:
  *         description: Account created, returns user info and JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "550e8400-e29b-41d4-a716-446655440000"
+ *                     username:
+ *                       type: string
+ *                       example: "janedoe"
+ *                     email:
+ *                       type: string
+ *                       example: "jane@example.com"
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Username, email, and password are required."
  *       409:
  *         description: Email already in use
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "A user with this email already exists."
  */
-router.post("/register", userController.register);
+router.post("/signup", userController.register);
 
 /**
  * @swagger
@@ -84,13 +120,49 @@ router.post("/register", userController.register);
  *               password:
  *                 type: string
  *                 example: mypassword123
- *     responses:
+*     responses:
  *       200:
  *         description: Login successful, returns user info and JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "550e8400-e29b-41d4-a716-446655440000"
+ *                     username:
+ *                       type: string
+ *                       example: "alice"
+ *                     email:
+ *                       type: string
+ *                       example: "alice@example.com"
+ *                 token:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       400:
  *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Email and password are required."
  *       401:
  *         description: Invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Invalid email or password."
  */
 router.post("/login", userController.login);
 

@@ -20,7 +20,7 @@ import jwt from "jsonwebtoken";
 import userRepository from "../repositories/userRepository.js";
 import { AuthError, ConflictError } from "../errors/index.js";
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev-secret-change-me";
+const JWT_SECRET = process.env.JWT_SECRET;
 const SALT_ROUNDS = 10;
 
 // Helper to create a JWT with the user's inside.
@@ -55,15 +55,12 @@ async function register(data) {
 }
 
 async function login(data) {
-  console.log("Login attempt for:", data.email);
   const user = await userRepository.findByEmail(data.email);
-  console.log("User found:", user ? user.username : "NONE");
   if (!user) {
     throw new AuthError("Invalid email or password.");
   }
 
   const passwordMatch = await bcrypt.compare(data.password, user.passwordHash);
-  console.log("Password match:", passwordMatch);
   if (!passwordMatch) {
     throw new AuthError("Invalid email or password.");
   }
